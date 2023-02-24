@@ -6,6 +6,8 @@ import { HiOutlineMenuAlt3 } from "react-icons/hi";
 import { auth } from "../../firebase/config";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { SET_ACTIVE_USER } from "../../redux/slice/authSlice";
 
 const logo = (
   <div className={styles.logo}>
@@ -34,13 +36,30 @@ const Header = () => {
   const [displayName, setDisplayName] = useState();
   const navigate = useNavigate();
 
+  const dispatch = useDispatch();
+
   //Monitor currently signed in user
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        const uid = user.uid;
-        console.log(user.displayName);
-        setDisplayName(user.displayName);
+        //console.log(user);
+        //const uid = user.uid;
+        //console.log(user.displayName);
+        if (user.displayName == null) {
+          const u1 = user.email.slice(0, -10);
+          const uName = u1.charAt(0).toUpperCase() + u1.slice(1);
+          setDisplayName(uName);
+        } else {
+          setDisplayName(user.displayName);
+        }
+
+        dispatch(
+          SET_ACTIVE_USER({
+            email: user.email,
+            userName: user.displayName ? user.displayName : displayName,
+            userID: user.uid,
+          })
+        );
       } else {
         setDisplayName("");
       }
@@ -108,7 +127,7 @@ const Header = () => {
               </NavLink>
               <a href="#">
                 <FaUserCircle size={16} />
-                Greetings, {displayName}
+                Hi, {displayName}|
               </a>
               <NavLink to="/register" className={activeLink}>
                 Register

@@ -17,6 +17,7 @@ import { deleteObject, ref } from "firebase/storage";
 import Notiflix from "notiflix";
 import { useDispatch } from "react-redux";
 import { STORE_PRODUCTS } from "../../../redux/slice/productSlice";
+import { useSelector } from "react-redux";
 
 const ViewProducts = () => {
   const [products, setProducts] = useState([]);

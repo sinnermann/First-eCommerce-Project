@@ -7,6 +7,10 @@ import { toast } from "react-toastify";
 import { addDoc, collection, Timestamp } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import Loader from "../../../components/loader/Loader";
+import { selectProducts } from "../../../redux/slice/productSlice";
+import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import { prodErrorMap } from "firebase/auth";
 
 const categories = [
   { id: 1, name: "Laptop" },
@@ -25,13 +29,26 @@ const initialState = {
 };
 
 const AddProduct = () => {
-  const [product, setProduct] = useState({
-    ...initialState,
+  const { id } = useParams();
+  const products = useSelector(selectProducts);
+  const productEdit = products.find((item) => item.id === id);
+  console.log(productEdit);
+
+  const [product, setProduct] = useState(() => {
+    const newState = detectForm(id, { ...initialState }, productEdit);
+    return newState;
   });
 
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+
+  function detectForm(id, f1, f2) {
+    if (id === "ADD") {
+      return f1;
+    }
+    return f2;
+  }
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -88,13 +105,25 @@ const AddProduct = () => {
     }
   };
 
+  const editProduct = (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+    } catch (error) {
+      setIsLoading(false);
+      toast.error(error.message);
+    }
+  };
+
   return (
     <>
       {isLoading && <Loader />}
+
       <div className={styles.product}>
-        <h1>Add New Product</h1>
+        <h2>{detectForm(id, "Add New Product", "Edit Product")}</h2>
         <Card className={styles.card}>
-          <form onSubmit={addProduct}>
+          <form onSubmit={detectForm(id, addProduct, editProduct)}>
             <label>Product Name:</label>
             <input
               type="text"
@@ -181,7 +210,9 @@ const AddProduct = () => {
               rows="10"
               onChange={(e) => handleInputChange(e)}
             ></textarea>
-            <button className="--btn --btn-primary">Save Product</button>
+            <button className="--btn --btn-primary">
+              {detectForm(id, "Save Product", "Edit Product")}
+            </button>
           </form>
         </Card>
       </div>

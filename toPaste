@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import styles from "./ProductDetails.module.scss";
 import { useParams } from "react-router-dom";
-
+import { NULL } from "node-sass";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../../firebase/config";
 
 const ProductDetails = () => {
   const { id } = useParams();
-  const [product, setProduct] = useState(null);
+  const [product, setProduct] = useState(NULL);
 
   useEffect(() => {
     getProduct();
@@ -18,7 +18,9 @@ const ProductDetails = () => {
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
+      console.log("Document data:", docSnap.data());
     } else {
+      console.log("No such Doc");
     }
   };
 

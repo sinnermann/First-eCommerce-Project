@@ -4,7 +4,10 @@ import ProductFilter from "./productFilter/ProductFilter";
 import ProductList from "./productList/ProductList";
 import useFetchCollection from "../../customHooks/useFetchCollection";
 import { useSelector, useDispatch } from "react-redux";
-import { STORE_PRODUCTS } from "../../redux/slice/productSlice";
+import {
+  STORE_PRODUCTS,
+  GET_PRICE_RANGE,
+} from "../../redux/slice/productSlice";
 import { selectProducts } from "../../redux/slice/productSlice";
 import spinnerImg from "../../assets/spinner.jpg";
 
@@ -16,6 +19,12 @@ const Product = () => {
 
   useEffect(() => {
     dispatch(STORE_PRODUCTS({ products: data }));
+
+    dispatch(
+      GET_PRICE_RANGE({
+        products: data,
+      })
+    );
   }, [dispatch, data]);
   return (
     <section>

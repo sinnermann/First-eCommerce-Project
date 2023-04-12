@@ -7,10 +7,15 @@ import {
   selectCartTotalQuantity,
   ADD_TO_CART,
   DECREASE_CART,
+  CLEAR_CART,
 } from "../../redux/slice/cartSlice";
 import { Link } from "react-router-dom";
 import { FaTrashAlt } from "react-icons/fa";
 import Card from "../../components/card/Card";
+import { REMOVE_FROM_CART } from "../../redux/slice/cartSlice";
+import { CALCULATE_SUBTOTAL } from "../../redux/slice/cartSlice";
+import { useEffect } from "react";
+import { CALCULATE_TOTAL_QUANTITY } from "../../redux/slice/cartSlice";
 
 const Cart = () => {
   const cartItems = useSelector(selectCartItems);
@@ -25,6 +30,20 @@ const Cart = () => {
   const decreaseCart = (cart) => {
     dispatch(DECREASE_CART(cart));
   };
+
+  const removeFromCart = (cart) => {
+    dispatch(REMOVE_FROM_CART(cart));
+  };
+
+  const clearCart = () => {
+    dispatch(CLEAR_CART());
+  };
+
+  useEffect(() => {
+    dispatch(CALCULATE_SUBTOTAL());
+    dispatch(CALCULATE_TOTAL_QUANTITY());
+  }, [dispatch, cartItems]);
+
   return (
     <section>
       <div className={`container ${styles.table}`}>
@@ -34,7 +53,7 @@ const Cart = () => {
             <p>Your Cart is Empty.</p>
             <br />
             <div>
-              <Link to="#products">&larr; Continue Shopping</Link>
+              <Link to="/#products">&larr; Continue Shopping</Link>
             </div>
           </>
         ) : (
@@ -95,7 +114,11 @@ const Cart = () => {
                       </td>
                       <td>{(price * cartTotalQuantity).toFixed(2)}</td>
                       <td className={styles.icons}>
-                        <FaTrashAlt size={19} color="red" />
+                        <FaTrashAlt
+                          size={19}
+                          color="red"
+                          onClick={() => removeFromCart(cart)}
+                        />
                       </td>
                     </tr>
                   );
@@ -103,14 +126,18 @@ const Cart = () => {
               </tbody>
             </table>
             <div className={styles.summary}>
-              <button className="--btn --btn-danger">Clear Cart</button>
+              <button className="--btn --btn-danger" onClick={clearCart}>
+                Clear Cart
+              </button>
               <div className={styles.checkout}>
                 <div>
                   <Link to="/#products">&larr; Continue Shopping</Link>
                 </div>
                 <br />
                 <Card cardClass={styles.card}>
-                  <p>{`Cart Item(s): ${cartTotalQuantity}`}</p>
+                  <p>
+                    <b>{`Cart Item(s): ${cartTotalQuantity}`}</b>
+                  </p>
                   <div className={styles.text}>
                     <h4>SubTotal:</h4>
                     <h3>{`$${cartTotalAmount.toFixed(2)}`}</h3>

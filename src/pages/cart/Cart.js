@@ -16,6 +16,9 @@ import { REMOVE_FROM_CART } from "../../redux/slice/cartSlice";
 import { CALCULATE_SUBTOTAL } from "../../redux/slice/cartSlice";
 import { useEffect } from "react";
 import { CALCULATE_TOTAL_QUANTITY } from "../../redux/slice/cartSlice";
+import { selectIsLoggedIn } from "../../redux/slice/authSlice";
+import { useNavigate } from "react-router-dom";
+import { SAVE_URL } from "../../redux/slice/cartSlice";
 
 const Cart = () => {
   const cartItems = useSelector(selectCartItems);
@@ -23,6 +26,9 @@ const Cart = () => {
   const cartTotalQuantity = useSelector(selectCartTotalQuantity);
 
   const dispatch = useDispatch();
+  const isLoggedIn = useSelector(selectIsLoggedIn);
+
+  const navigate = useNavigate();
 
   const increaseCart = (cart) => {
     dispatch(ADD_TO_CART(cart));
@@ -42,7 +48,19 @@ const Cart = () => {
   useEffect(() => {
     dispatch(CALCULATE_SUBTOTAL());
     dispatch(CALCULATE_TOTAL_QUANTITY());
-  }, [dispatch, cartItems]);
+    dispatch(SAVE_URL(""));
+  }, [cartItems, dispatch]);
+
+  const url = window.location.href;
+
+  const checkout = () => {
+    if (isLoggedIn) {
+      navigate("/checkout-details");
+    } else {
+      dispatch(SAVE_URL(url));
+      navigate("/login");
+    }
+  };
 
   return (
     <section>
@@ -71,14 +89,7 @@ const Cart = () => {
               </thead>
               <tbody>
                 {cartItems.map((cart, index) => {
-                  const {
-                    id,
-                    name,
-                    product,
-                    imageURL,
-                    price,
-                    cartTotalQuantity,
-                  } = cart;
+                  const { id, name, price, imageURL, cartQuantity } = cart;
                   return (
                     <tr key={id}>
                       <td>{index + 1}</td>
@@ -102,7 +113,7 @@ const Cart = () => {
                             -
                           </button>
                           <p>
-                            <b>{cartTotalQuantity}</b>
+                            <b>{cartQuantity}</b>
                           </p>
                           <button
                             className="--btn"
@@ -142,8 +153,11 @@ const Cart = () => {
                     <h4>SubTotal:</h4>
                     <h3>{`$${cartTotalAmount.toFixed(2)}`}</h3>
                   </div>
-                  <p>Tax an Shipping calcuated at checkout</p>
-                  <button className="--btn --btn-primary --ntn-block">
+                  <p>Tax an Shipping calculated at checkout</p>
+                  <button
+                    className="--btn --btn-primary --ntn-block"
+                    onClick={checkout}
+                  >
                     Checkout
                   </button>
                 </Card>

@@ -2,6 +2,13 @@ import React, { useState } from "react";
 import Card from "../../components/card/Card";
 import styles from "./CheckoutDetails.module.scss";
 import { CountryDropdown } from "react-country-region-selector";
+import { useDispatch } from "react-redux";
+import {
+  SAVE_SHIPPING_ADDRESS,
+  SAVE_BILLING_ADDRESS,
+} from "../../redux/slice/checkoutSlice";
+import { useNavigate } from "react-router-dom";
+import CheckoutSummary from "../../components/checkoutSummary/CheckoutSummary";
 
 const initialAddressState = {
   name: "",
@@ -17,6 +24,9 @@ const initialAddressState = {
 const CheckoutDetails = () => {
   const [shippingAddress, setShippingAddress] = useState({});
   const [billingAddress, setBillingAddress] = useState({});
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleShipping = (e) => {
     const { name, value } = e.target;
@@ -34,8 +44,9 @@ const CheckoutDetails = () => {
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(shippingAddress);
-    console.log(billingAddress);
+    dispatch(SAVE_SHIPPING_ADDRESS(shippingAddress));
+    dispatch(SAVE_BILLING_ADDRESS(billingAddress));
+    navigate("/checkout");
   };
 
   return (
@@ -195,6 +206,11 @@ const CheckoutDetails = () => {
               <button type="submit" className="--btn --btn-primary">
                 Proceed To Checkout
               </button>
+            </Card>
+          </div>
+          <div>
+            <Card cardClass={styles.card}>
+              <CheckoutSummary />
             </Card>
           </div>
         </form>

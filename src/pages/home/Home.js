@@ -6,19 +6,19 @@ import styles from "./Home.module.scss";
 
 const Home = () => {
   const url = window.location.href;
-  const scrollToProducts = () => {
-    if (url.includes("#products")) {
-      window.scrollTo({
-        top: 700,
-        behavour: "smooth",
-      });
-      return;
-    }
-  };
 
   useEffect(() => {
+    const scrollToProducts = () => {
+      if (url.includes("#products")) {
+        window.scrollTo({
+          top: 700,
+          behavour: "smooth",
+        });
+        return;
+      }
+    };
     scrollToProducts();
-  }, []);
+  }, [url]);
 
   return (
     <div>

@@ -18,10 +18,10 @@ const ProductList = ({ products }) => {
   const [sort, setSort] = useState("latest");
   const filteredProducts = useSelector(selectFilteredProducts);
 
-  //Pagination state
+  // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
-  const [productsPerPage, setProductsPerPage] = useState(9);
-  // Get Current Product
+  const [productsPerPage] = useState(9);
+  // Get Current Products
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = filteredProducts.slice(
@@ -32,11 +32,11 @@ const ProductList = ({ products }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(SORT_PRODUCTS({ products: products, sort: sort }));
+    dispatch(SORT_PRODUCTS({ products, sort }));
   }, [dispatch, products, sort]);
 
   useEffect(() => {
-    dispatch(FILTER_BY_SEARCH({ products: products, search: search }));
+    dispatch(FILTER_BY_SEARCH({ products, search }));
   }, [dispatch, products, search]);
 
   return (
@@ -48,18 +48,20 @@ const ProductList = ({ products }) => {
             color="orangered"
             onClick={() => setGrid(true)}
           />
+
           <FaListAlt size={24} color="#0066d4" onClick={() => setGrid(false)} />
+
           <p>
-            <b>{filteredProducts.length}</b> Products Found.
+            <b>{filteredProducts.length}</b> Products found.
           </p>
         </div>
-        {/* Search Icon*/}
+        {/* Search Icon */}
         <div>
           <Search value={search} onChange={(e) => setSearch(e.target.value)} />
         </div>
-        {/* Search Icon*/}
+        {/* Sort Products */}
         <div className={styles.sort}>
-          <label>Sort by: </label>
+          <label>Sort by:</label>
           <select value={sort} onChange={(e) => setSort(e.target.value)}>
             <option value="latest">Latest</option>
             <option value="lowest-price">Lowest Price</option>
@@ -69,9 +71,10 @@ const ProductList = ({ products }) => {
           </select>
         </div>
       </div>
+
       <div className={grid ? `${styles.grid}` : `${styles.list}`}>
-        {filteredProducts.length === 0 ? (
-          <p>No Product Found.</p>
+        {products.lenght === 0 ? (
+          <p>No product found.</p>
         ) : (
           <>
             {currentProducts.map((product) => {
@@ -83,13 +86,13 @@ const ProductList = ({ products }) => {
             })}
           </>
         )}
+        <Pagination
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          productsPerPage={productsPerPage}
+          totalProducts={filteredProducts.length}
+        />
       </div>
-      <Pagination
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-        productsPerPage={productsPerPage}
-        totalProducts={filteredProducts.length}
-      />
     </div>
   );
 };

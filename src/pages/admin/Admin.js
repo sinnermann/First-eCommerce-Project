@@ -5,7 +5,8 @@ import ViewProducts from "../../components/admin/viewProducts/ViewProducts";
 import AddProduct from "../../components/admin/addProducts/AddProduct";
 import Orders from "../../components/admin/orders/Orders";
 import { Routes, Route } from "react-router-dom";
-import Home from "../home/Home";
+//import Home from "../home/Home";
+import Home from "../../components/admin/home/Home";
 
 const Admin = () => {
   return (

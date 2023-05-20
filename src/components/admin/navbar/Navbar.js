@@ -1,9 +1,9 @@
 import React from "react";
-import styles from "./Navbar.module.scss";
 import { useSelector } from "react-redux";
-import { selectUserName } from "../../../redux/slice/authSlice";
-import { FaUserCircle } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
+import { selectUserName } from "../../../redux/slice/authSlice";
+import styles from "./Navbar.module.scss";
+import { FaUserCircle } from "react-icons/fa";
 
 const activeLink = ({ isActive }) => (isActive ? `${styles.active}` : "");
 
@@ -24,8 +24,8 @@ const Navbar = () => {
             </NavLink>
           </li>
           <li>
-            <NavLink to="/admin/view-products" className={activeLink}>
-              View All Products
+            <NavLink to="/admin/all-products" className={activeLink}>
+              All Products
             </NavLink>
           </li>
           <li>

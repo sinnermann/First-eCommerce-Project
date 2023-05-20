@@ -1,21 +1,19 @@
-import React, { useState } from "react";
-import Card from "../../card/Card";
-import styles from "./AddProduct.module.scss";
+import { addDoc, collection, doc, setDoc, Timestamp } from "firebase/firestore";
 import {
   deleteObject,
   getDownloadURL,
   ref,
   uploadBytesResumable,
 } from "firebase/storage";
-import { db, storage } from "../../../firebase/config";
-import { toast } from "react-toastify";
-import { addDoc, collection, doc, setDoc, Timestamp } from "firebase/firestore";
-import { useNavigate } from "react-router-dom";
-import Loader from "../../../components/loader/Loader";
-import { selectProducts } from "../../../redux/slice/productSlice";
+import { useState } from "react";
 import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
-import { prodErrorMap } from "firebase/auth";
+import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import { db, storage } from "../../../firebase/config";
+import Card from "../../card/Card";
+import Loader from "../../loader/Loader";
+import styles from "./AddProduct.module.scss";
+import { selectProducts } from "../../../redux/slice/productSlice";
 
 const categories = [
   { id: 1, name: "Laptop" },
@@ -59,9 +57,11 @@ const AddProduct = () => {
     const { name, value } = e.target;
     setProduct({ ...product, [name]: value });
   };
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    //console.log(file);
+    // console.log(file);
+
     const storageRef = ref(storage, `eshop/${Date.now()}${file.name}`);
     const uploadTask = uploadBytesResumable(storageRef, file);
 
@@ -86,6 +86,7 @@ const AddProduct = () => {
 
   const addProduct = (e) => {
     e.preventDefault();
+    // console.log(product);
     setIsLoading(true);
 
     try {
@@ -102,7 +103,7 @@ const AddProduct = () => {
       setUploadProgress(0);
       setProduct({ ...initialState });
 
-      toast.success("Product uploaded successfully!");
+      toast.success("Product uploaded successfully.");
       navigate("/admin/all-products");
     } catch (error) {
       setIsLoading(false);
@@ -132,7 +133,7 @@ const AddProduct = () => {
       });
       setIsLoading(false);
       toast.success("Product Edited Successfully");
-      navigate("/admin/all-product");
+      navigate("/admin/all-products");
     } catch (error) {
       setIsLoading(false);
       toast.error(error.message);
@@ -142,12 +143,11 @@ const AddProduct = () => {
   return (
     <>
       {isLoading && <Loader />}
-
       <div className={styles.product}>
         <h2>{detectForm(id, "Add New Product", "Edit Product")}</h2>
-        <Card className={styles.card}>
+        <Card cardClass={styles.card}>
           <form onSubmit={detectForm(id, addProduct, editProduct)}>
-            <label>Product Name:</label>
+            <label>Product name:</label>
             <input
               type="text"
               placeholder="Product name"
@@ -156,7 +156,8 @@ const AddProduct = () => {
               value={product.name}
               onChange={(e) => handleInputChange(e)}
             />
-            <label>Product Image:</label>
+
+            <label>Product image:</label>
             <Card cardClass={styles.group}>
               {uploadProgress === 0 ? null : (
                 <div className={styles.progress}>
@@ -178,10 +179,11 @@ const AddProduct = () => {
                 name="image"
                 onChange={(e) => handleImageChange(e)}
               />
+
               {product.imageURL === "" ? null : (
                 <input
                   type="text"
-                  required
+                  // required
                   placeholder="Image URL"
                   name="imageURL"
                   value={product.imageURL}
@@ -189,23 +191,25 @@ const AddProduct = () => {
                 />
               )}
             </Card>
-            <label>Product Price:</label>
+
+            <label>Product price:</label>
             <input
               type="number"
-              placeholder="Product Price"
+              placeholder="Product price"
               required
               name="price"
               value={product.price}
               onChange={(e) => handleInputChange(e)}
             />
+            <label>Product Category:</label>
             <select
+              required
               name="category"
               value={product.category}
-              required
               onChange={(e) => handleInputChange(e)}
             >
               <option value="" disabled>
-                -- Select Product Category--
+                -- choose product category --
               </option>
               {categories.map((cat) => {
                 return (
@@ -215,24 +219,27 @@ const AddProduct = () => {
                 );
               })}
             </select>
+
             <label>Product Company/Brand:</label>
             <input
               type="text"
-              placeholder="Product Brand"
+              placeholder="Product brand"
               required
               name="brand"
               value={product.brand}
               onChange={(e) => handleInputChange(e)}
             />
-            <label>Product Description:</label>
+
+            <label>Product Description</label>
             <textarea
               name="desc"
               required
               value={product.desc}
+              onChange={(e) => handleInputChange(e)}
               cols="30"
               rows="10"
-              onChange={(e) => handleInputChange(e)}
             ></textarea>
+
             <button className="--btn --btn-primary">
               {detectForm(id, "Save Product", "Edit Product")}
             </button>

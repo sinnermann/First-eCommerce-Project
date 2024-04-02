@@ -7,7 +7,6 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase/config";
-import Loader from "../../components/loader/Loader";
 
 const Register = () => {
   const [email, setEmail] = useState("");
@@ -42,7 +41,7 @@ const Register = () => {
   return (
     <>
       <ToastContainer />
-      {isLoading && <Loader />}
+      
       <section className={`container ${styles.auth}`}>
         <Card>
           <div className={styles.form}>
